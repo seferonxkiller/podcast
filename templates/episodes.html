@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/episodes.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/episodes_responsive.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="super_container">
+
+        {% include 'nav.html' %}
+
+        <div class="home">
+            <div class="parallax_background parallax-window" data-parallax="scroll"
+                 data-image-src="{% static 'images/blog_1.jpg' %}"
+                 data-speed="0.8"></div>
+            <div class="home_container d-flex flex-column align-items-center justify-content-center">
+                <div class="home_content">
+                    <div class="home_title"><h1>episodes</h1></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="episodes">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="season_links">
+                            <ul class="d-flex flex-row align-items-start justify-content-center flex-wrap">
+                                <li class="item_filter_btn" data-filter="*">All Seasons</li>
+                                {% for foo in season %}
+                                    <li class="item_filter_btn" data-filter=".s{{ foo.season }}">
+                                        Season {{ foo.season }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row episodes_row">
+
+                    <div class="col-lg-3">
+                        <div class="sidebar">
+
+                            <div class="sidebar_search">
+                                <div class="sidebar_title">Search</div>
+                                <form action="#" class="search_form" id="search_form">
+                                    <input type="search" name="q" class="search_input" placeholder="Search here"
+                                           required="required">
+                                    <button class="search_button"><img src="{% static 'images/search.png' %}" alt="">
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="sidebar_list">
+                                <div class="sidebar_title">Categories</div>
+                                <ul>
+                                    {% for category in categories %}
+
+                                        <li><a href="?cat={{ category.title }}">{{ category.title }}</a></li>
+
+                                    {% endfor %}
+                                </ul>
+                            </div>
+
+                            <div class="sidebar_tags">
+                                <div class="sidebar_title">Tags</div>
+                                <div class="tags">
+                                    <ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
+                                        {% for tag in tags %}
+
+                                            <li><a href="?tag={{ tag.title }}">{{ tag.title }}</a></li>
+
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="sidebar_archive">
+                                <div class="sidebar_title">Archive</div>
+                                <div class="dropdown">
+                                    <ul>
+                                        <li class="dropdown_selected d-flex flex-row align-items-center justify-content-start">
+                                            <span>September 2018</span><i class="fa fa-chevron-down ml-auto"
+                                                                          aria-hidden="true"></i>
+                                            <ul>
+                                                <li><a href="#">August 2018</a></li>
+                                                <li><a href="#">July 2018</a></li>
+                                                <li><a href="#">June 2018</a></li>
+                                                <li><a href="#">May 2018</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-9 episodes_col">
+                        <div class="episodes_container">
+
+                            {% for app in episode %}
+
+                                <div class="episode d-flex flex-row align-items-start justify-content-start s{{ app.season.season }}">
+
+                                    <div>
+                                        <div class="episode_image">
+                                            <img src="{{ app.image.url }}" alt="">
+                                            <div class="tags">
+                                                <ul class="d-flex flex-row align-items-start justify-content-start">
+                                                    <li><a href="#">music</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="episode_content">
+                                        <div class="episode_name"><a
+                                                href="{% url 'episodes:detail' app.pk %}">{{ app.title }}</a></div>
+                                        <div class="episode_date"><a href="#">{{ app.created_date }}</a></div>
+                                        <div class="show_info d-flex flex-row align-items-start justify-content-start">
+                                            <div class="show_fav d-flex flex-row align-items-center justify-content-start">
+                                                <div data-episode_id="{{ app.id }}" id="lbtn_{{ app.id }}" class="do_like {% if app.id in my_liked_episodes_list %}active liked {% endif %} show_fav_icon show_info_icon"><img
+                                                        class="svg"
+                                                        src="{% static 'images/heart.svg' %}"
+                                                        alt="">
+                                                </div>
+                                                <div class="show_fav_count" id="lcount_{{ app.id }}">{{ app.like_set.count }}</div>
+                                            </div>
+                                            <div class="show_comments">
+                                                <a href="#">
+                                                    <div class="d-flex flex-row align-items-center justify-content-start">
+                                                        <div class="show_comments_icon show_info_icon"><img class="svg"
+                                                                                                            src="{% static 'images/speech-bubble.svg' %}"
+                                                                                                            alt="">
+                                                        </div>
+                                                        <div class="show_comments_count">{{ app.comment_set.count }}</div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="single_player_container">
+                                            <div class="single_player d-flex flex-row align-items-center justify-content-start">
+                                                <div id="jplayer_{{ app.id }}" data-url="{{ app.music.url }}"
+                                                     class="jp-jplayer"></div>
+                                                <div id="jp_container_{{ app.id }}" class="jp-audio" role="application"
+                                                     aria-label="media player">
+                                                    <div class="jp-type-single">
+                                                        <div class="player_controls">
+                                                            <div class="jp-gui jp-interface d-flex flex-row align-items-center justify-content-start">
+                                                                <div class="jp-controls-holder time_controls d-flex flex-row align-items-center justify-content-between">
+                                                                    <div>
+                                                                        <div class="jp-controls-holder play_button ml-auto">
+                                                                            <button class="jp-play"
+                                                                                    tabindex="0"></button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div>
+                                                                        <div class="jp-progress">
+                                                                            <div class="jp-seek-bar">
+                                                                                <div class="jp-play-bar"></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="jp-volume-controls d-flex flex-row align-items-center justify-content-between ml-auto">
+                                                                    <div class="d-flex flex-row align-items-center justify-content-start">
+                                                                        <button class="jp-mute" tabindex="0"></button>
+                                                                    </div>
+                                                                    <div class="d-flex flex-row align-items-center justify-content-start">
+                                                                        <div class="jp-volume-bar">
+                                                                            <div class="jp-volume-bar-value"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {#                                                        <div class="jp-no-solution">#}
+                                                        {#                                                            <span>Update Required</span>#}
+                                                        {#                                                            To play the media you will need to either update your#}
+                                                        {#                                                            browser to a#}
+                                                        {#                                                            recent version or update your <a#}
+                                                        {#                                                                href="https://get.adobe.com/flashplayer/"#}
+                                                        {#                                                                target="_blank">Flash#}
+                                                        {#                                                            plugin</a>#}
+                                                        {#                                                        </div>#}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row page_nav_row">
+                    <div class="col">
+                        <div class="page_nav d-flex flex-row align-items-center justify-content-center">
+                            <ul class="d-flex flex-row">
+                                {% if episode.has_previous %}
+                                    <li><a href="?page={{ episode.previous_page_number }}">&lt;</a></li>
+                                {% endif %}
+                                {% for page_item in episode.paginator.page_range %}
+                                    <li class="{% if page_item == episode.number %}active{% endif %}"><a
+                                            href="?page={{ page_item }}"><span>{{ page_item }}</span></a></li>
+                                {% endfor %}
+                                {% if episode.has_next %}
+                                    <li><a href="?page={{ episode.next_page_number }}">&gt;</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include 'footer.html' %}
+    </div>
+
+
+{% endblock %}
+{% block js %}
+
+    <script src="{% static 'js/episodes.js' %}"></script>
+
+{% endblock %}
+

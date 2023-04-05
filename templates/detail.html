@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/episode.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/episode_responsive.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="home">
+        <div class="parallax_background parallax-window" data-parallax="scroll"
+             data-image-src="{{ object.image.url }}"
+             data-speed="0.8"></div>
+        <div class="home_container">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="home_content text-center">
+                            <div class="home_title"><h1>{{ object.title }}</h1></div>
+                            <div class="home_subtitle text-center">{{ object.created_date|date:"F Y" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="episode_container">
+
+        <div class="container">
+            <div class="row">
+
+                <div class="col-lg-3 order-lg-1 order-2 sidebar_col">
+                    <div class="sidebar">
+
+                        <div class="sidebar_list">
+                            <div class="sidebar_title">Categories</div>
+                            <ul>
+                                <li><a href="{% url 'episodes:index' %}?cat=">All categories</a></li>
+                                {% for cat in cats %}
+                                    <li><a href="{% url 'blog:index' %}?cat={{ cat.title }}">{{ cat.title }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <div class="sidebar_tags">
+                            <div class="sidebar_title">Tags</div>
+                            <div class="tags">
+                                <ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
+                                    <li><a href="{% url 'episodes:index' %}?tag=">All tags</a></li>
+                                    {% for tag in tags1 %}
+                                        <li><a href="{% url 'blog:index' %}?tag={{ tag.title }}">{{ tag.title }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="sidebar_archive">
+                            <div class="sidebar_title">Archive</div>
+                            <div class="dropdown">
+                                <ul>
+                                    <li class="dropdown_selected d-flex flex-row align-items-center justify-content-start">
+                                        <span>September 2018</span><i class="fa fa-chevron-down ml-auto"
+                                                                      aria-hidden="true"></i>
+                                        <ul>
+                                            <li><a href="#">August 2018</a></li>
+                                            <li><a href="#">July 2018</a></li>
+                                            <li><a href="#">June 2018</a></li>
+                                            <li><a href="#">May 2018</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-9 episode_col order-lg-2 order-1">
+                    <div class="intro">
+                        <div class="section_title">{{ object.title }}</div>
+                        <div class="intro_text">
+                            <p>{{ object.description }}</p>
+                        </div>
+                    </div>
+                    <div class="guests">
+                        <div class="section_title">Guests</div>
+                        <div class="guests_container d-flex flex-md-row flex-column align-items-md-start align-items-center justify-content-start">
+
+                            <div class="guest_container">
+                                <div class="guest">
+                                    <div class="guest_image"><img src="{% static 'images/guest_1.jpg' %}"
+                                                                  alt="https://unsplash.com/@stairhopper"></div>
+                                    <div class="guest_content text-center">
+                                        <div class="guest_name"><a href="#">{{ object.author }}</a></div>
+                                        <div class="guest_title">{{ object.author }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="comments">
+                        <div class="section_title">{{ object.comment_set.count }}Comments</div>
+                        <div class="comments_container">
+                            <ul>
+                                {% for comment in object.comment_set.all|dictsortreversed:"id" %}
+                                    <li class="d-flex flex-row">
+                                        {% if comment.user.avatar %}
+                                            <div>
+                                                <div class="comment_image">
+                                                    <img src="{{ comment.user.avatar.url }}"
+                                                         alt=""></div>
+                                            </div>
+                                        {% else %}
+                                            <div>
+                                                <div class="comment_image"><img src="{% static 'images/user_2.jpg' %}"
+                                                                                alt=""></div>
+                                            </div>
+                                        {% endif %}
+
+                                        <div class="comment_content">
+                                            <div class="user_name"><a href="#">{{ comment.user.user }}</a></div>
+                                            <div class="comment_text">
+                                                <p>{{ comment.content }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                {% endfor %}
+
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="comment_form_container">
+                        <div class="section_title">Leave a comment</div>
+                        <form method="post" id="comment_form" class="comment_form">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {% if not request.user.is_authenticated %}
+                                        {{ form.name }}
+                                        {{ form.content }}
+                                    {% else %}
+                                        </div>
+                                        </div>
+                                        <div>{{ form.content }}</div>
+                                    {% endif %}
+                            <button type="submit" class="comment_button button_fill">send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/episode.js' %}"></script>
+{% endblock %}
